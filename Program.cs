@@ -6,20 +6,47 @@ namespace Matrix
     {
         static void Main(string[] args)
         {
-
-            int[,] arr = new int[3,2];
-            int arrVal = 0;
+            Console.Write("Write the first matrix raw size and when done Press 'Enter': ");
+            int rowA = int.Parse(Console.ReadLine());
+            Console.Write("Write the first matrix column size and when done Press 'Enter': ");
+            int colA = int.Parse(Console.ReadLine());
+            int[,] arr = new int[rowA, colA];
+            
             for (int i = 0; i < arr.GetLength(0); i++)
             {
-                Console.WriteLine("Enter arrays for raw "+i+1);
+                Console.Write("Enter arrays elements for raw n.o "+(i+1).ToString()+ " with "+arr.GetLength(1)+" number of elements. Use spacebar to seperate the raw elements. \nYou may Enter row elements now and ");
+                Console.Write("Press Enter if done: ");
+
+                string[] arrValues = Console.ReadLine().Split(" ");
+                int j = 0;
+                for (j = 0; j < arr.GetLength(1); j++)
+                {
+                    arr[i,j] = Int32.Parse(arrValues[j]);
+                   
+                }
+               // Console.WriteLine();
+                if(arrValues.Length > j)
+                {
+                    Console.WriteLine("You've entered more than expected row "+i+ " elements, therefore the following delimited elements will be removed from row " +i+" :");
+                    for(int jk = j; jk < arrValues.Length; jk++)
+                    {
+                        Console.Write(arrValues[jk] + " ");
+
+                    }
+                    Console.WriteLine();
+
+                }
+            }
+            Console.WriteLine();
+            for (int i = 0; i < arr.GetLength(0); i++)
+            {
                 for (int j = 0; j < arr.GetLength(1); j++)
                 {
-                    arrVal = Int32.Parse(Console.ReadLine());
-                     arr[i, j] = arrVal;
-                    Console.Write(" ");
+                    Console.Write(arr[i,j]+" ");
                 }
                 Console.WriteLine();
             }
+
 
             int[,] arrA = { { 1, 2, 3, 4 }, { 1, 3, 5, 7 }, { 2, 4, 6, 8 } };
 

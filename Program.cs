@@ -1,64 +1,158 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Globalization;
+using Matrix;
 
 namespace Matrix
 {
     class Program
     {
+
+
         static void Main(string[] args)
         {
-            Console.Write("Write the first matrix raw size and when done Press 'Enter': ");
+          
+            Matrix.ProgramRef.SetConsoleWindowPosition(Matrix.ProgramRef.AnchorWindow.Fill);
+
+        
+            Console.Write("Matrix A Section\n- - - - -\n\n");
+            Console.Write("Enter matrix A raw size and Press 'Enter' button to continue:\n");
             int rowA = int.Parse(Console.ReadLine());
-            Console.Write("Write the first matrix column size and when done Press 'Enter': ");
+            Console.Write("Enter matrix A column size and Press 'Enter' button to continue:\n");
             int colA = int.Parse(Console.ReadLine());
-            int[,] arr = new int[rowA, colA];
-            
-            for (int i = 0; i < arr.GetLength(0); i++)
+            decimal[,] arrA = new decimal[rowA, colA]; 
+
+            int lenElement = 0;
+            Console.WriteLine("\n ========= Moving to the Matrix A, raw {0} ============== ", 0.ToString());
+
+            for (int i = 0; i < rowA; i++)
             {
-                Console.Write("Enter arrays elements for raw n.o "+(i+1).ToString()+ " with "+arr.GetLength(1)+" number of elements. Use spacebar to seperate the raw elements. \nYou may Enter row elements now and ");
-                Console.Write("Press Enter if done: ");
+                Console.WriteLine();
+             
+                for (int j = 0; j < colA; j++)
+                {
+                    Console.WriteLine("Enter Matrix A element at row {0} and column {1}: ", i.ToString(), j.ToString());
+                    arrA[i, j] = decimal.Parse(Console.ReadLine(), CultureInfo.InvariantCulture.NumberFormat);
 
-                string[] arrValues = Console.ReadLine().Split(" ");
-                int j = 0;
-                for (j = 0; j < arr.GetLength(1); j++)
-                {
-                    arr[i,j] = Int32.Parse(arrValues[j]);
-                   
-                }
-               // Console.WriteLine();
-                if(arrValues.Length > j)
-                {
-                    Console.WriteLine("You've entered more than expected row "+i+ " elements, therefore the following delimited elements will be removed from row " +i+" :");
-                    for(int jk = j; jk < arrValues.Length; jk++)
+                    if (arrA[i,j].ToString().Length > lenElement)
                     {
-                        Console.Write(arrValues[jk] + " ");
-
+                        lenElement = arrA[i, j].ToString().Length;
                     }
-                    Console.WriteLine();
 
+
+
+                }
+                if (i < rowA - 1)
+                {
+                    Console.WriteLine("\n ========= Moving to the Matrix A, raw {0} ============== ",(i+1).ToString());
                 }
             }
-            Console.WriteLine();
-            for (int i = 0; i < arr.GetLength(0); i++)
+
+
+            //Get Matrix B
+            Console.Write("\nMatrix B Section\n- - - - -\n");
+            Console.Write("\nEnter matrix B raw size and Press 'Enter' button to continue:\n");
+            int rowB = int.Parse(Console.ReadLine());
+            Console.Write("Enter matrix B column size and Press 'Enter' button to continue:\n");
+            int colB = int.Parse(Console.ReadLine());
+            decimal[,] arrB = new decimal[rowB, colB];
+
+
+            Console.WriteLine("\n========= Moving to the Matrix B, raw {0} ==============", 0.ToString());
+
+            for (int i = 0; i < rowB; i++)
             {
-                for (int j = 0; j < arr.GetLength(1); j++)
+                Console.WriteLine();
+               
+                for (int j = 0; j < colB; j++)
                 {
-                    Console.Write(arr[i,j]+" ");
+                    Console.WriteLine("Enter Matrix B element at row {0} and column {1}: ", i.ToString(), j.ToString());
+                    arrB[i, j] = decimal.Parse(Console.ReadLine(), CultureInfo.InvariantCulture.NumberFormat);
+
+
+                    if (arrB[i, j].ToString().Length > lenElement)
+                    {
+                        lenElement = arrB[i, j].ToString().Length;
+                    }
+
+
+                }
+                if (i < rowB - 1)
+                {
+                    Console.WriteLine("\n========= Moving to the Matrix B, raw {0} ==============",(i+1).ToString());
+                }
+            }
+
+  
+  
+            //Printing Matrix product of Matrix A by B
+            Console.WriteLine("The product of Matrix A by B = ");
+            int greatRaws = arrA.GetLength(0) > arrB.GetLength(0) ? arrA.GetLength(0) : arrB.GetLength(0);
+
+            
+            for (int i = 0; i < greatRaws; i++)
+            {
+
+                int j = 0;
+                if (i < arrA.GetLength(0))
+                {
+                    for (j= 0; j < arrA.GetLength(1); j++)
+                    {
+                        Console.Write(arrA[i, j] + new string(' ', lenElement - arrA[i,j].ToString().Length +1));
+                    }
+                }
+                else
+                {
+                    Console.Write(new string(' ', lenElement*(arrA.GetLength(1))));
+                }
+
+                if (i == arrA.GetLength(0) / 2)
+                {
+                    Console.Write(new string(' ', lenElement - (arrA[i, j].ToString().Length + 1) / 4) + "By" + new string(' ', lenElement - (arrA[i, j].ToString().Length + 1) / 4));
+                }
+                else
+                { 
+                
+                }
+                if (i < arrB.GetLength(0))
+                {
+
+                    for (int k = 0; k < arrB.GetLength(1); k++)
+                    {
+                        if (k == 0)
+                        {
+                            Console.Write(arrB[i, k]);
+                        }
+                        else
+                        {
+                            Console.Write(new string(' ', lenElement - arrB[i, k].ToString().Length + 1) + arrB[i, k]);
+                        }
+                    }
+                }
+                else
+                {
+                    //Console.Write(new string(' ', lenElement * (arrB.GetLength(1))));
+                    continue;
                 }
                 Console.WriteLine();
             }
 
 
-            int[,] arrA = { { 1, 2, 3, 4 }, { 1, 3, 5, 7 }, { 2, 4, 6, 8 } };
 
-            int[,] arrB = { { 7, 1 }, { 6, 4 }, { 2, 2 }, { 5, 5 } };
 
-            int[,] arrC = new int[arrA.GetLength(0),arrB.GetLength(1)];
-          
+            // double[,] arrA = { { 1, 2, 3, 4 }, { 1, 3, 5, 7 }, { 2, 4, 6, 8 } };
 
-            int matrixVal = 0;
+            //  double[,] arrB = { { 7, 1 }, { 6, 4 }, { 2, 2 }, { 5, 5 } };
+
+            decimal[,] arrC = new decimal[arrA.GetLength(0), arrB.GetLength(1)];
+
+
+            decimal matrixVal = 0;
 
             int colCount = 0;
-            
+
             for (int i = 0; i < arrA.GetLength(0); i++)
             {
                 while (colCount < arrC.GetLength(1))
@@ -68,18 +162,20 @@ namespace Matrix
                         matrixVal += arrA[i, j] * arrB[j, colCount];
                     }
                     arrC[i, colCount] = matrixVal;
+
+
                     matrixVal = 0;
                     colCount += 1;
                 }
                 colCount = 0;
             }
 
-            Console.WriteLine("Product");
+            Console.WriteLine("The Product of A matrix\x2098" + rowA + " x " + colA + " by B matrix\x2098" + rowB + " x " + colB + " =");
             for (int i = 0; i < arrC.GetLength(0); i++)
             {
                 for (int j = 0; j < arrC.GetLength(1); j++)
                 {
-                    Console.Write(arrC[i, j].ToString() + " ");
+                    Console.Write(arrC[i, j].ToString() + new string(' ',lenElement));
                 }
                 Console.WriteLine("");
             }

@@ -24,7 +24,8 @@ namespace Matrix
             int colA = int.Parse(Console.ReadLine());
             decimal[,] arrA = new decimal[rowA, colA]; 
 
-            int lenElement = 0;
+            int lenElement = 0; //matrix A or B element with maximum value
+            int lenElementSec = 0;
             Console.WriteLine("\n ========= Moving to the Matrix A, raw {0} ============== ", 0.ToString());
 
             for (int i = 0; i < rowA; i++)
@@ -72,9 +73,9 @@ namespace Matrix
                     arrB[i, j] = decimal.Parse(Console.ReadLine(), CultureInfo.InvariantCulture.NumberFormat);
 
 
-                    if (arrB[i, j].ToString().Length > lenElement)
+                    if (arrB[i, j].ToString().Length > lenElementSec)
                     {
-                        lenElement = arrB[i, j].ToString().Length;
+                        lenElementSec = arrB[i, j].ToString().Length;
                     }
 
 
@@ -90,12 +91,13 @@ namespace Matrix
             //Printing Matrix product of Matrix A by B
             Console.WriteLine("The product of Matrix A by B = ");
             int greatRaws = arrA.GetLength(0) > arrB.GetLength(0) ? arrA.GetLength(0) : arrB.GetLength(0);
-
+            int maxRawLen = 0; // matrix B
             
             for (int i = 0; i < greatRaws; i++)
             {
-
-                int j = 0;
+                
+                    int j = 0;
+               
                 if (i < arrA.GetLength(0))
                 {
                     for (j= 0; j < arrA.GetLength(1); j++)
@@ -105,17 +107,31 @@ namespace Matrix
                 }
                 else
                 {
-                    Console.Write(new string(' ', lenElement*(arrA.GetLength(1))));
+                     
+                    if (maxRawLen == 0)
+                    {
+                        string rawLenStr = string.Empty;
+                        for (j = 0; j < arrA.GetLength(1); j++)
+                        {
+                            maxRawLen += (lenElement - arrA[i - 1,j].ToString().Length) + arrA[i - 1, j].ToString().Length;
+                            //Console.WriteLine("max string {0}", maxRawLen);
+                            //Console.ReadKey();
+                        }
+
+                        maxRawLen += 1;
+                        //maxRawLen +=lenElement;
+                        //Console.WriteLine("max string {0}", maxRawLen);
+                        //Console.ReadKey();
+                    }
+                    //continue;
+                    //Console.Write(new string(' ', lenElement*(arrA.GetLength(1))));
                 }
 
-                if (i == arrA.GetLength(0) / 2)
+                if (i == arrA.GetLength(0) / 2 && j <= arrA.GetLength(1))
                 {
-                    Console.Write(new string(' ', lenElement - (arrA[i, j].ToString().Length + 1) / 4) + "By" + new string(' ', lenElement - (arrA[i, j].ToString().Length + 1) / 4));
+                    Console.Write("by");
                 }
-                else
-                { 
                 
-                }
                 if (i < arrB.GetLength(0))
                 {
 
@@ -123,11 +139,29 @@ namespace Matrix
                     {
                         if (k == 0)
                         {
-                            Console.Write(arrB[i, k]);
+                            if (maxRawLen == 0)
+                            {
+                                
+                                if (i == arrA.GetLength(0) / 2 && j <= arrA.GetLength(1))
+                                {
+                                    Console.Write(" " + arrB[i, k]);
+                                }
+                                else
+                                {
+                                
+                                Console.Write("   " + arrB[i, k]);
+                                }
+                            }
+                            else
+                            {
+                                Console.Write(new string(' ', maxRawLen+5) + arrB[i, k]);
+                            }
                         }
                         else
-                        {
-                            Console.Write(new string(' ', lenElement - arrB[i, k].ToString().Length + 1) + arrB[i, k]);
+                        { 
+                            
+                                Console.Write(new string(' ', lenElementSec - arrB[i, k-1].ToString().Length + 2) + arrB[i, k]);
+                            //Console.ReadKey();
                         }
                     }
                 }
@@ -153,14 +187,54 @@ namespace Matrix
 
             int colCount = 0;
 
+            bool noErr = false;
+
             for (int i = 0; i < arrA.GetLength(0); i++)
             {
-                while (colCount < arrC.GetLength(1))
+                while (colCount < arrC.GetLength(1) && noErr == false)
                 {
                     for (int j = 0; j < arrB.GetLength(0); j++)
                     {
-                        matrixVal += arrA[i, j] * arrB[j, colCount];
+                        try
+                        {
+                            matrixVal += arrA[i, j] * arrB[j, colCount];
+                        }
+                        catch(OverflowException)
+                        {
+                            try
+                            {
+                                throw new ExeptionFiles("You've entered an element number that is beyond a deciaml value, please RESTART!");
+                            }
+                            catch (ExeptionFiles)
+                            {
+                                Console.Error.WriteLine("You've entered an element number that is beyond a deciaml value, please RESTART!");
+                                noErr = true;
+                                
+                            }
+                            goto EndFuncts;
+                        }
+                        if (arrA.GetLength(1) != arrB.GetLength(0))
+                        {
+                            Exception excepName = new Exception("ColumnRawSizeErr");
+                            try
+                            {
+                                throw new ExeptionFiles("\nError occured, because Number of columns in first matrix must be equal to number of rows in second matrix, please RESTART!", excepName);
+                            }
+                            catch(ExeptionFiles)
+                            {
+                                Console.Error.WriteLine("\nError occured, because Number of columns in first matrix must be equal to number of rows in second matrix, please RESTART!");
+                                noErr = false;
+                                goto EndFuncts;
+                            }
+                        }
+
+                        if ( i < arrC.GetLength(0) && j < arrC.GetLength(1) && (arrA[i, j] * arrB[j, colCount]).ToString().Length > lenElement )
+                        {
+                            lenElement = (arrA[i, j] * arrB[j, colCount]).ToString().Length;
+                        }
+
                     }
+                  
                     arrC[i, colCount] = matrixVal;
 
 
@@ -169,18 +243,35 @@ namespace Matrix
                 }
                 colCount = 0;
             }
-
-            Console.WriteLine("The Product of A matrix\x2098" + rowA + " x " + colA + " by B matrix\x2098" + rowB + " x " + colB + " =");
+            if (noErr == true)
+            {
+                goto EndFuncts;
+            }
+            Console.WriteLine("\n=");
+            
             for (int i = 0; i < arrC.GetLength(0); i++)
             {
+                if (noErr == true)
+                {
+                    break;
+                }
                 for (int j = 0; j < arrC.GetLength(1); j++)
                 {
-                    Console.Write(arrC[i, j].ToString() + new string(' ',lenElement));
+                    if (j == 0)
+                    {
+                        Console.Write(arrC[i, j]);
+                    }
+                    else 
+                    {
+                        Console.Write(new string(' ', lenElement - arrC[i, j-1].ToString().Length + 1) + arrC[i, j]);
+
+                    }
+                    
                 }
                 Console.WriteLine("");
             }
 
-
+            EndFuncts:;
         }
     }
 }

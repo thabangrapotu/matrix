@@ -37,4 +37,4 @@ Contributions to this repository are welcome! If you have an interesting data sc
 5. Submit a pull request with your changes.
 
 ## License
-This repository is licensed under the [MIT License](https://github.com/thabangrapotu/Website/blob/main/LICENSE). Feel free to use, modify, and distribute the code for personal or commercial purposes.
+This repository is licensed under the [MIT License](https://github.com/thabangrapotu/matrix/commit/7f4f8aa4bdfe06b9d737f3b93fac6f4f3dae0a32). Feel free to use, modify, and distribute the code for personal or commercial purposes.
